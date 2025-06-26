@@ -1,11 +1,15 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import './App.css';
+import { OrbitControls } from '@react-three/drei';
 
 function App() {
   return (
     <div id='canvas-container'>
-      <Canvas camera={{ fov: 45, aspect: window.innerWidth / window.innerHeight, position: [0, 0, 10] }}>
+      <Canvas
+        camera={{ fov: 45, position: [0, 0, 10] }}
+        dpr={2}
+      >
         <mesh>
           <sphereGeometry />
           <meshStandardMaterial color={'#00ff83'} />
@@ -14,6 +18,13 @@ function App() {
           intensity={15}
           decay={1}
           position={[0, 10, 10]}
+        />
+        <OrbitControls
+          enableDamping={true}
+          enablePan={false}
+          enableZoom={false}
+          autoRotate={true}
+          autoRotateSpeed={10}
         />
       </Canvas>
     </div>
