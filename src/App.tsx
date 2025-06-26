@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Mesh } from 'three';
+import type { Color, Mesh } from 'three';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import gsap from 'gsap';
@@ -8,6 +8,38 @@ import './App.css';
 
 function App() {
   const [sphereMesh, setSphereMesh] = React.useState<Mesh | null>(null);
+  const [rgb, setRgb] = React.useState<number[]>([0, 255, 131]);
+  const isMouseDown = React.useRef(false);
+
+  React.useEffect(() => {
+    const onMouseDown = () => {
+      isMouseDown.current = true;
+    };
+
+    const onMouseUp = () => {
+      isMouseDown.current = false;
+    };
+
+    const onMouseMove = (event: MouseEvent) => {
+      if (!isMouseDown.current) return;
+
+      setRgb([
+        Math.round((event.pageX / window.innerWidth) * 255),
+        Math.round((event.pageY / window.innerHeight) * 255),
+        150,
+      ]);
+    };
+
+    window.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('mousemove', onMouseMove);
+
+    return () => {
+      window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('mousemove', onMouseMove);
+    };
+  }, []);
 
   useGSAP(() => {
     gsap.set('nav', { y: '-100%' });
@@ -19,8 +51,8 @@ function App() {
     gsap
       .timeline({ defaults: { duration: 1 } })
       .fromTo(sphereMesh.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 })
-      .fromTo('nav', { y: '-100%' }, { y: '0%' })
-      .fromTo('.title', { opacity: 0 }, { opacity: 1 });
+      .to('nav', { y: '0%' })
+      .to('.title', { opacity: 1 });
   }, [sphereMesh]);
 
   return (
@@ -40,7 +72,7 @@ function App() {
         >
           <mesh ref={(ref) => setSphereMesh(ref)}>
             <sphereGeometry />
-            <meshStandardMaterial color='#00ff83' />
+            <meshStandardMaterial color={`rgb(${rgb.join(',')})`} />
           </mesh>
           <pointLight
             intensity={15}
