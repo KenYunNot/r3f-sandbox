@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Color, Mesh } from 'three';
+import type { Mesh } from 'three';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import gsap from 'gsap';
@@ -7,12 +7,21 @@ import { useGSAP } from '@gsap/react';
 import './App.css';
 
 function App() {
-  const canvas = React.useRef<HTMLDivElement>(null);
-  const timeline = gsap.timeline({ defaults: { duration: 1 } });
+  const [sphereMesh, setSphereMesh] = React.useState<Mesh | null>(null);
 
   useGSAP(() => {
-    timeline.fromTo('nav', { y: '-100%' }, { y: '0%' });
+    gsap.set('nav', { y: '-100%' });
+    gsap.set('.title', { opacity: 0 });
   });
+
+  useGSAP(() => {
+    if (!sphereMesh) return;
+    gsap
+      .timeline({ defaults: { duration: 1 } })
+      .fromTo(sphereMesh.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 })
+      .fromTo('nav', { y: '-100%' }, { y: '0%' })
+      .fromTo('.title', { opacity: 0 }, { opacity: 1 });
+  }, [sphereMesh]);
 
   return (
     <>
@@ -24,18 +33,15 @@ function App() {
         </ul>
       </nav>
       <h1 className='title'>Give it a spin</h1>
-      <div
-        ref={canvas}
-        id='canvas-container'
-      >
+      <div id='canvas-container'>
         <Canvas
           camera={{ fov: 45, position: [0, 0, 10] }}
           dpr={2}
         >
-          <Sphere
-            color='#00ff83'
-            timeline={timeline}
-          />
+          <mesh ref={(ref) => setSphereMesh(ref)}>
+            <sphereGeometry />
+            <meshStandardMaterial color='#00ff83' />
+          </mesh>
           <pointLight
             intensity={15}
             decay={1}
@@ -46,33 +52,12 @@ function App() {
             enablePan={false}
             enableZoom={false}
             autoRotate={true}
-            autoRotateSpeed={10}
+            autoRotateSpeed={2}
           />
         </Canvas>
       </div>
     </>
   );
 }
-
-const Sphere = ({
-  color = '0xffffff',
-  timeline,
-}: {
-  color: string | number | Color;
-  timeline: ReturnType<typeof gsap.timeline>;
-}) => {
-  const sphereMesh = React.useRef<Mesh>(null!);
-
-  useGSAP(() => {
-    timeline.fromTo(sphereMesh.current.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });
-  });
-
-  return (
-    <mesh ref={sphereMesh}>
-      <sphereGeometry />
-      <meshStandardMaterial color={color} />
-    </mesh>
-  );
-};
 
 export default App;
