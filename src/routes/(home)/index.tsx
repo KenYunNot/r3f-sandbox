@@ -31,21 +31,24 @@ const Home = () => {
       </div>
       <div className='grid-container'>
         <GridItem href='developedbyed-followalong' title='Three.js Crash Course for Beginners'>
-          <p>
-            I did a follow-along with this{' '}
-            <a
-              href='https://www.youtube.com/watch?v=_OwJV2xL8M8&list=PLVOXfoQ_x6wcFJ8b122nEVC0jnDjoqKlk&index=22'
-              target='_blank'
-            >
-              video
-            </a>{' '}
-            by{' '}
-            <a href='https://www.youtube.com/@developedbyed' target='_blank'>
-              developedbyed
-            </a>{' '}
-            but I implemented it in React Three Fiber. The tutorial is originally done in vanilla
-            Three.js.
-          </p>
+          I did a follow-along with this{' '}
+          <a
+            href='https://www.youtube.com/watch?v=_OwJV2xL8M8&list=PLVOXfoQ_x6wcFJ8b122nEVC0jnDjoqKlk&index=22'
+            target='_blank'
+          >
+            video
+          </a>{' '}
+          by{' '}
+          <a href='https://www.youtube.com/@developedbyed' target='_blank'>
+            developedbyed
+          </a>{' '}
+          but I implemented it in React Three Fiber. The tutorial is originally done in vanilla
+          Three.js.
+        </GridItem>
+
+        <GridItem href='mouse-follow' title='Mouse Follow'>
+          I saw this cool effect on a R3F or GSAP example (can't remember) and I wanted to try and
+          replicate it.
         </GridItem>
       </div>
     </div>
@@ -59,7 +62,7 @@ const GridItem = ({
 }: {
   href: string;
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) => {
   const gridItemRef = React.useRef<HTMLDivElement>(null!);
 
