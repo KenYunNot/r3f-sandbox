@@ -3,13 +3,16 @@ import { TextureLoader, Color, type Mesh } from 'three';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 
-import './styles.css';
-
 const MouseFollow = () => {
   return (
-    <div className='container'>
-      <a href='/'>Home</a>
-      <div id='canvas-container'>
+    <div className='w-full h-screen'>
+      <a
+        href='/'
+        className='inline-block px-16 py-8 text-3xl text-black z-50 hover:underline'
+      >
+        Home
+      </a>
+      <div className='absolute top-0 left-0 w-full h-full -z-[1]'>
         <Canvas
           camera={{ position: [0, 0, 50] }}
           scene={{ background: new Color(0xf0f0f0) }}

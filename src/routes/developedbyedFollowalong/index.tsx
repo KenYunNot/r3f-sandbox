@@ -5,8 +5,6 @@ import { OrbitControls } from '@react-three/drei';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
-import './styles.css';
-
 const DevelopedbyedFollowalong = () => {
   const [sphereMesh, setSphereMesh] = React.useState<Mesh | null>(null);
   const [rgb, setRgb] = React.useState<number[]>([0, 255, 131]);
@@ -44,7 +42,7 @@ const DevelopedbyedFollowalong = () => {
 
   useGSAP(() => {
     gsap.set('nav', { y: '-100%' });
-    gsap.set('.title', { opacity: 0 });
+    gsap.set('h1', { opacity: 0 });
   });
 
   useGSAP(() => {
@@ -53,20 +51,25 @@ const DevelopedbyedFollowalong = () => {
       .timeline({ defaults: { duration: 1 } })
       .fromTo(sphereMesh.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 })
       .to('nav', { y: '0%' })
-      .to('.title', { opacity: 1 });
+      .to('h1', { opacity: 1 });
   }, [sphereMesh]);
 
   return (
     <div>
-      <nav>
-        <a href='/'>Home</a>
-        <ul>
-          <li>Hello</li>
-          <li>World</li>
+      <nav className='relative px-32 py-16 flex justify-between text-white z-[2]'>
+        <a
+          href='/'
+          className='font-bold no-underline'
+        >
+          Home
+        </a>
+        <ul className='list-none flex gap-16'>
+          <li>Hello World</li>
+          <li>My First R3F Project</li>
         </ul>
       </nav>
-      <h1 className='title'>Give it a spin</h1>
-      <div id='canvas-container'>
+      <h1 className='absolute top-3/4 left-1/2 -translate-x-1/2 text-5xl text-white z-[2]'>Give it a spin</h1>
+      <div className='absolute top-0 left-0 w-full h-full bg-black z-[1]'>
         <Canvas
           camera={{ fov: 45, position: [0, 0, 10] }}
           dpr={2}
