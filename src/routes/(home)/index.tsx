@@ -31,7 +31,7 @@ const Home = () => {
         <h1 className='text-5xl mb-4'>R3F and GSAP Sandbox</h1>
         <p className='text-xl'>Check out what I learned so far!</p>
       </div>
-      <div className='max-w-7xl grid grid-cols-4 gap-4'>
+      <div className='max-w-7xl grid grid-cols-3 gap-4'>
         <GridItem
           href='developedbyed-followalong'
           title='Three.js Crash Course for Beginners'
