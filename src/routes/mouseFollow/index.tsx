@@ -1,22 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { TextureLoader, Color, type Mesh } from 'three';
-import { Canvas, useLoader } from '@react-three/fiber';
+import { Canvas, useLoader, useThree } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 const MouseFollow = () => {
   return (
     <div className='w-full h-screen'>
-      <a
-        href='/'
-        className='inline-block px-16 py-8 text-3xl text-black z-50 hover:underline'
-      >
-        Home
-      </a>
+      <div className='px-8 md:px-16 py-8 flex justify-between items-center'>
+        <a href='/' className='inline-block text-3xl z-50 hover:underline'>
+          Home
+        </a>
+        <p>GSAP for smooth transition</p>
+      </div>
       <div className='absolute top-0 left-0 w-full h-full -z-[1]'>
-        <Canvas
-          camera={{ position: [0, 0, 50] }}
-          scene={{ background: new Color(0xf0f0f0) }}
-        >
+        <Canvas camera={{ position: [0, 0, 50] }}>
           <Environment files={'environments/qwantani_afternoon_puresky_2k.hdr'} />
           <Box />
           <ambientLight intensity={5} />
@@ -27,7 +26,10 @@ const MouseFollow = () => {
 };
 
 const Box = () => {
+  const { viewport } = useThree();
   const meshRef = useRef<Mesh>(null!);
+  const mousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
   const [colorMap, metalnessMap, normalMap, roughnessMap] = useLoader(TextureLoader, [
     'Metal061B_1K-JPG/Metal061B_1K-JPG_Color.jpg',
     'Metal061B_1K-JPG/Metal061B_1K-JPG_Metalness.jpg',
@@ -35,22 +37,33 @@ const Box = () => {
     'Metal061B_1K-JPG/Metal061B_1K-JPG_Roughness.jpg',
   ]);
 
-  useEffect(() => {
+  useGSAP(() => {
+    const xTo = gsap.quickTo(mousePosition.current, 'x', { ease: 'power1.out' });
+    const yTo = gsap.quickTo(mousePosition.current, 'y', { ease: 'power1.out' });
     const handleMouseMove = (event: MouseEvent) => {
-      meshRef.current.lookAt(
+      const [vectorX, vectorY] = [
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      );
+      ];
+      gsap.to(mousePosition.current, {
+        x: vectorX * (viewport.width / 2),
+        y: vectorY * (viewport.height / 2),
+        ease: 'power1.out',
+        onUpdate: () => meshRef.current.lookAt(mousePosition.current.x, mousePosition.current.y, 5),
+      });
+      xTo(vectorX * (viewport.width / 2));
+      yTo(vectorY * (viewport.height / 2));
     };
+
     window.addEventListener('mousemove', handleMouseMove);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  });
 
   return (
-    <mesh ref={meshRef}>
+    <mesh ref={meshRef} position={[-10, 0, 0]}>
       <boxGeometry args={[10, 10, 10]} />
       <meshStandardMaterial
         color='rgb(4,158,244)'
