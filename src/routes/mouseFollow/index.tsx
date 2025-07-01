@@ -35,10 +35,14 @@ const MouseFollow = () => {
             color='red'
           />
           <Box
-            z={-40}
+            z={-20}
             color='green'
           />
           <ambientLight intensity={5} />
+          <fog
+            attach='fog'
+            args={['black', 40, 100]}
+          />
         </Canvas>
       </div>
     </div>
@@ -79,7 +83,7 @@ const Box = ({
         x: vectorX * (viewport.width / 2),
         y: vectorY * (viewport.height / 2),
         duration: 1.5,
-        ease: 'power1.out',
+        ease: 'power4.out',
         onUpdate: () => meshRef.current.lookAt(mousePosition.current.x, mousePosition.current.y, 5),
       });
     };
