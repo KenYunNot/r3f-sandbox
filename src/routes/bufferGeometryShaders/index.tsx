@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { TextureLoader, Color, Vector3 } from 'three';
 
-const BufferGeometryDemo = () => {
+const BufferGeometryShaders = () => {
   return (
     <div className='w-full h-screen'>
       <div
@@ -18,7 +18,7 @@ const BufferGeometryDemo = () => {
 };
 
 const BufferPoints = ({ sep }: { sep: number }) => {
-  const { viewport, pointer } = useThree();
+  const { viewport } = useThree();
   const uniforms = useRef({
     uColor: { type: 'vec3', value: new Color(0x424242) },
     uTexture: { type: 'vec3', value: new TextureLoader().load('/circle.png') },
@@ -90,4 +90,4 @@ const BufferPoints = ({ sep }: { sep: number }) => {
   );
 };
 
-export default BufferGeometryDemo;
+export default BufferGeometryShaders;

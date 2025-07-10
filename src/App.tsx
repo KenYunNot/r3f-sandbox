@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import Home from './routes/(home)/index.tsx';
 import DevelopedbyedFollowalong from './routes/developedbyedFollowalong/index.tsx';
 import MouseFollow from './routes/mouseFollow/index.tsx';
-import BufferGeometryDemo from './routes/bufferGeometryDemo/index.tsx';
+import BufferGeometryShaders from './routes/bufferGeometryShaders/index.tsx';
 
 import './App.css';
 
@@ -27,7 +27,7 @@ function App() {
 
         <Route
           path='buffer-geometry-demo'
-          element={<BufferGeometryDemo />}
+          element={<BufferGeometryShaders />}
         />
       </Routes>
     </BrowserRouter>
