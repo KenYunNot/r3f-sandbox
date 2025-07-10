@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { TextureLoader, Color, Vector3 } from 'three';
+import { TextureLoader, Color, Vector2 } from 'three';
 
 const BufferGeometryShaders = () => {
   return (
@@ -18,37 +18,16 @@ const BufferGeometryShaders = () => {
 };
 
 const BufferPoints = ({ sep }: { sep: number }) => {
-  const { viewport } = useThree();
+  const { viewport, pointer } = useThree();
   const uniforms = useRef({
-    uColor: { type: 'vec3', value: new Color(0x424242) },
+    uColor: { type: 'vec3', value: new Color(0x525252) },
+    uAccentColor: { type: 'vec3', value: new Color(0x74d4ff) },
     uTexture: { type: 'vec3', value: new TextureLoader().load('/circle.png') },
-    uMouse: { type: 'vec3', value: new Vector3() },
+    uMouse: { type: 'vec2', value: new Vector2(0, 0) },
     uPointSize: { type: 'float', value: 6.0 },
+    uAmplitude: { type: 'float', value: 15.0 },
+    uSigma: { type: 'float', value: 10.0 },
   });
-  const vertexShader = `
-    uniform float uPointSize;
-
-    varying vec3 vUv;
-
-    void main() {
-      vUv = position;
-
-      vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-      gl_PointSize = uPointSize;
-      gl_Position = projectionMatrix * modelViewPosition; 
-    }
-  `;
-  const fragmentShader = `
-    uniform vec3 uColor;
-    uniform sampler2D uTexture;
-
-    varying vec3 vUv;
-  
-    void main() {
-      gl_FragColor = vec4(uColor, 1.0) * texture2D( uTexture, gl_PointCoord );
-    }
-  `;
-
   const { positions, normals } = useMemo(() => {
     const positions = [];
     const normals = [];
@@ -69,8 +48,51 @@ const BufferPoints = ({ sep }: { sep: number }) => {
     };
   }, [viewport, sep]);
 
+  const vertexShader = `
+    uniform vec2 uMouse;
+    uniform float uPointSize;
+    uniform float uAmplitude;
+    uniform float uSigma;
+
+    varying float pointZ;
+
+    float gauss(vec2 v) {
+      float x = v.x;
+      float y = v.y;
+      float x_0 = uMouse.x;
+      float y_0 = uMouse.y;
+      return uAmplitude * exp(-( ((x - x_0) * (x - x_0)) / (2.0 * uSigma * uSigma) + ((y - y_0) * (y - y_0)) / (2.0 * uSigma * uSigma) ));
+    }
+
+    void main() {
+      pointZ = gauss(position.xy);
+
+      gl_PointSize = uPointSize;
+      vec4 modelViewPosition = modelViewMatrix * vec4(position.xy, pointZ, 1.0);
+      gl_Position = projectionMatrix * modelViewPosition; 
+    }
+  `;
+  const fragmentShader = `
+    uniform vec3 uColor;
+    uniform vec3 uAccentColor;
+    uniform vec2 uMouse;
+    uniform float uAmplitude;
+    uniform sampler2D uTexture;
+
+    varying float pointZ;
+
+    void main() {
+      float colorMultiplier = pointZ / uAmplitude;
+      gl_FragColor = vec4( uColor + uAccentColor * colorMultiplier, 1.0 ) * texture2D( uTexture, gl_PointCoord );
+    }
+  `;
+
+  const handlePointerMove = () => {
+    uniforms.current.uMouse.value = new Vector2(pointer.x * (viewport.width / 2), pointer.y * (viewport.height / 2));
+  };
+
   return (
-    <points>
+    <points onPointerMove={handlePointerMove}>
       <bufferGeometry>
         <bufferAttribute
           attach='attributes-position'
@@ -85,6 +107,7 @@ const BufferPoints = ({ sep }: { sep: number }) => {
         uniforms={uniforms.current}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
+        transparent={true}
       />
     </points>
   );
