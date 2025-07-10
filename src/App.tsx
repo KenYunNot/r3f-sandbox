@@ -26,7 +26,7 @@ function App() {
         />
 
         <Route
-          path='buffer-geometry-demo'
+          path='buffer-geometry-shaders'
           element={<BufferGeometryShaders />}
         />
       </Routes>

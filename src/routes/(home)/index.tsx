@@ -62,6 +62,14 @@ const Home = () => {
           I saw this cool effect on a R3F example and I wanted to try and replicate it. I also experimented with
           Three.js environment and texture maps.
         </GridItem>
+
+        <GridItem
+          href='buffer-geometry-shaders'
+          title='Buffer Geometry and Shaders Demo'
+        >
+          I wanted to reimplement an effect I did on my portfolio with Three.js and Shaders. Using this as an
+          opportunity to learn more about buffer geometries and shaders to segue into more complex projects.
+        </GridItem>
       </div>
     </div>
   );
