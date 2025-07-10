@@ -1,8 +1,14 @@
 import { useMemo, useRef } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { TextureLoader, Color, Vector2 } from 'three';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 const BufferGeometryShaders = () => {
+  useGSAP(() => {
+    gsap.from('#canvas-container', { opacity: 0, delay: 1, duration: 1 });
+  });
+
   return (
     <div className='w-full h-screen'>
       <div
